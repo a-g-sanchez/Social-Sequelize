@@ -15,42 +15,47 @@ describe('Social Sequelzie Test', () => {
         // the 'sync' method will create tables based on the model class
         // by setting 'force:true' the tables are recreated each time the test suite is run
         await db.sync({ force: true });
-        await Comment.bulkCreate(commentsSeed)
-        await Like.bulkCreate(likesSeed)
-        await Post.bulkCreate(postsSeed)
-        await Profile.bulkCreate(profilesSeed)
-        await User.bulkCreate(usersSeed)
     })
     
     // Write your tests here
 
     test('Comment model should have seed data', async() => {
-        const allComments = await Comment.findAll()
-        expect(allComments[0]).toBeInstanceOf(Comment)
+        const newComment = await Comment.create(commentsSeed[0])
+        expect(newComment).toBeInstanceOf(Comment)
     })
     
     test('Like model should have seed data', async() => {
-        const allLikes = await Like.findAll()
-        expect(allLikes[0]).toBeInstanceOf(Like)
+        const newLike = await Like.create(likesSeed[0])
+        expect(newLike).toBeInstanceOf(Like)
     })
 
     test('Post model should have seed data', async() => {
-        const allPosts = await Post.findAll()
-        expect(allPosts[0]).toBeInstanceOf(Post)
+        const newPost = await Post.create(postsSeed[0])
+        expect(newPost).toBeInstanceOf(Post)
     })
     
     test('Profile model should have seed data', async() => {
-        const allProfiles = await Profile.findAll()
-        expect(allProfiles[0]).toBeInstanceOf(Profile)
+        const newProfile = await Profile.create(profilesSeed[0])
+        expect(newProfile).toBeInstanceOf(Profile)
     })
 
     test('User model should have seed data', async() => {
-        const allUsers = await User.findAll()
-        expect(allUsers[0]).toBeInstanceOf(User)
+        const newUser = await User.create(usersSeed[0])
+        expect(newUser).toBeInstanceOf(User)
     }
     )
 
-    
+    test('User association test between profile', async ()=> {
+        await db.sync({force: true})
+        const newUser = await User.create(usersSeed[1])
+        const newProfile = await Profile.create(profilesSeed[1])
+
+        await newUser.setProfile(newProfile)
+
+        const associatedProfile = await newUser.getProfile()
+        expect(associatedProfile).toBeInstanceOf(Profile)
+        // console.log(JSON.stringify(associatedProfile, null, 2))
+    })
 
 
 })
