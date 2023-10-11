@@ -45,7 +45,7 @@ describe('Social Sequelzie Test', () => {
     }
     )
 
-    test('User association test between profile', async ()=> {
+    test('User can have one profile', async ()=> {
         await db.sync({force: true})
         const newUser = await User.create(usersSeed[1])
         const newProfile = await Profile.create(profilesSeed[1])
@@ -56,7 +56,7 @@ describe('Social Sequelzie Test', () => {
         expect(associatedProfile).toBeInstanceOf(Profile)
     })
 
-    test('User association test with posts', async () => {
+    test('User can have many posts', async () => {
         await db.sync({force: true})
         const newUser = await User.create(usersSeed[0])
         const postOne = await Post.create(postsSeed[0])
@@ -66,13 +66,45 @@ describe('Social Sequelzie Test', () => {
         
         const associatedPosts = await newUser.getPosts()
         expect(associatedPosts.length).toBe(2)
+        expect(associatedPosts[0]).toBeInstanceOf(Post)
         
         // Eager loading test
-        const userWithPosts = await User.findByPk(1, {
-            include: Post
-        })
-        console.log(JSON.stringify(userWithPosts, null, 2))
+        // const userWithPosts = await User.findByPk(1, {
+        //     include: Post
+        // })
+        // console.log(JSON.stringify(userWithPosts, null, 2))
 
+    })
+
+    test('Post can have many comments', async() => {
+        await db.sync({force: true})
+        const newPost = await Post.create(postsSeed[1])
+        const comments = await Comment.bulkCreate(commentsSeed)
+
+        await newPost.setComments(comments)
+
+        const associatedComents = await newPost.getComments()
+        expect(associatedComents.length).toBe(5)
+        expect(associatedComents[1]).toBeInstanceOf(Comment)
+        // console.log(JSON.stringify(associatedComents, null, 2))
+    })
+
+    test('Likes can have many Users', async() => {
+        await db.sync({force: true})
+        const newLike = await Like.create(likesSeed[0])
+        const userOne = await User.create(usersSeed[0])
+        const userTwo = await User.create(usersSeed[1])
+
+        // ASK ABOUT SETUSERS VS ADDUSER
+        await newLike.addUser(userOne)
+        await newLike.addUser(userTwo)
+
+        const associatedUsers = await newLike.getUsers()
+        expect(associatedUsers.length).toBe(2)
+        expect(associatedUsers[0]).toBeInstanceOf(User)
+
+        
+        console.log(JSON.stringify(associatedUsers, null, 2))
     })
 
 })
