@@ -99,6 +99,9 @@ describe('Social Sequelzie Test', () => {
         await newLike.addUser(userOne)
         await newLike.addUser(userTwo)
 
+        // await newLike.setUsers(userOne)
+        // await newLike.setUsers(userTwo)
+
         const associatedUsers = await newLike.getUsers()
         expect(associatedUsers.length).toBe(2)
         expect(associatedUsers[0]).toBeInstanceOf(User)
