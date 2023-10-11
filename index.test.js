@@ -107,15 +107,16 @@ describe('Social Sequelzie Test', () => {
         expect(associatedUsers[0]).toBeInstanceOf(User)
 
         //Eager loading
-        // const likeWithUsers = await Like.findByPk(1, {
-        //     include: User
-        // })
-
         const likeWithUsers = await Like.findAll({
-            include: [
-                {model: User, as: 'user_likes' }
-            ]
+            include: User
         })
+
+        //Below does NOT work but the above does
+        // const likeWithUsers = await Like.findAll({
+        //     include: [
+        //         { model: User, as: 'user_likes' }
+        //     ]
+        // })
         console.log(JSON.stringify(likeWithUsers, null, 2))
     })
 
