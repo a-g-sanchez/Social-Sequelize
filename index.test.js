@@ -54,8 +54,25 @@ describe('Social Sequelzie Test', () => {
 
         const associatedProfile = await newUser.getProfile()
         expect(associatedProfile).toBeInstanceOf(Profile)
-        // console.log(JSON.stringify(associatedProfile, null, 2))
     })
 
+    test('User association test with posts', async () => {
+        await db.sync({force: true})
+        const newUser = await User.create(usersSeed[0])
+        const postOne = await Post.create(postsSeed[0])
+        const postTwo = await Post.create(postsSeed[1])
+
+        await newUser.setPosts([postOne, postTwo])
+        
+        const associatedPosts = await newUser.getPosts()
+        expect(associatedPosts.length).toBe(2)
+        
+        // Eager loading test
+        const userWithPosts = await User.findByPk(1, {
+            include: Post
+        })
+        console.log(JSON.stringify(userWithPosts, null, 2))
+
+    })
 
 })
