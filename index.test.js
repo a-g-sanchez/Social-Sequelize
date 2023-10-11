@@ -106,8 +106,11 @@ describe('Social Sequelzie Test', () => {
         expect(associatedUsers.length).toBe(2)
         expect(associatedUsers[0]).toBeInstanceOf(User)
 
-        
-        console.log(JSON.stringify(associatedUsers, null, 2))
+        //Eager loading
+        const likeWithUsers = await Like.findByPk(1, {
+            include: User
+        })
+        console.log(JSON.stringify(likeWithUsers, null, 2))
     })
 
 })
